@@ -15,6 +15,7 @@ use Google_Http_Request;
 use Kdyby\Google\IO\Curl;
 use Nette\Utils\Html;
 use Nette;
+use Nette\SmartObject;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
 
@@ -45,8 +46,10 @@ if (!class_exists('Tracy\Dumper')) {
  * @property callable $failure
  * @property callable $success
  */
-class Panel extends Nette\Object implements IBarPanel
+class Panel implements IBarPanel
 {
+
+	use SmartObject;
 
 	/**
 	 * @var int logged time
@@ -178,9 +181,9 @@ class Panel extends Nette\Object implements IBarPanel
 
 	public function register(Curl $client)
 	{
-		$client->onRequest[] = $this->begin;
-		$client->onError[] = $this->error;
-		$client->onSuccess[] = $this->success;
+		$client->onRequest[] = [$this, 'begin'];
+		$client->onError[] = [$this, 'error'];
+		$client->onSuccess[] = [$this, 'success'];
 
 		self::getDebuggerBar()->addPanel($this);
 	}

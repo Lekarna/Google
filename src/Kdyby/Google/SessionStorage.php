@@ -12,6 +12,7 @@ namespace Kdyby\Google;
 
 use Nette;
 use Nette\Diagnostics\Debugger;
+use Nette\SmartObject;
 
 
 
@@ -28,8 +29,10 @@ use Nette\Diagnostics\Debugger;
  * @property string $user_id
  * @property string $last_request
  */
-class SessionStorage extends Nette\Object
+class SessionStorage
 {
+
+	use SmartObject;
 
 	/**
 	 * @var \Nette\Http\SessionSection
