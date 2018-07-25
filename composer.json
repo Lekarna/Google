@@ -1,9 +1,9 @@
 {
-	"name": "kdyby/google",
+	"name": "lekarna/google",
 	"type": "library",
 	"description": "Google API wrapper and authentication for Nette Framework",
 	"keywords": ["nette", "google", "authentication", "auth", "login"],
-	"homepage": "http://kdyby.org",
+	"homepage": "https://github.com/Lekarna/Google",
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 		{
@@ -32,8 +32,8 @@
 		"jakub-onderka/php-parallel-lint": "~0.7"
 	},
 	"support": {
-		"email": "filip@prochazka.su",
-		"issues": "https://github.com/kdyby/google/issues"
+		"email": "it@lekarna.cz",
+		"issues": "https://github.com/Lekarna/Google/issues"
 	},
 	"autoload": {
 		"psr-0": {
