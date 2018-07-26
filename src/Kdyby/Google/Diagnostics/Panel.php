@@ -80,7 +80,7 @@ class Panel implements IBarPanel
 		}
 
 		ob_start();
-		$esc = array('Nette\Templating\Helpers', 'escapeHtml');
+		$esc = array('\Latte\Runtime\Filters', 'escapeHtml');
 		$click = class_exists('\Tracy\Dumper')
 			? function ($o, $c = FALSE) {
 				return \Tracy\Dumper::toHtml($o, array('collapse' => $c));
