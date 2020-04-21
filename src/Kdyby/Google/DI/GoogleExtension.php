@@ -35,6 +35,7 @@ class GoogleExtension extends CompilerExtension
 		'clearAllWithLogout' => TRUE,
 		'scopes' => array('profile', 'email'),
 		'accessType' => 'online',
+		'approvalPrompt' => 'auto',
 		'returnUri' => NULL,
 		'debugger' => '%debugMode%'
 	);
@@ -64,6 +65,9 @@ class GoogleExtension extends CompilerExtension
 		Validators::assert($config['scopes'], 'list', 'Permission scopes');
 		if (!in_array($config['accessType'], $allowed = array('online', 'offline'))) {
 			throw new Nette\Utils\AssertionException("Key accessType is expected to be one of [" . implode(', ', $allowed) . "], but '" . $config['accessType'] . "' was given.");
+		}
+		if (!in_array($config['approvalPrompt'], $allowed = array('auto', 'force'))) {
+			throw new Nette\Utils\AssertionException("Key approvalPrompt is expected to be one of [" . implode(', ', $allowed) . "], but '" . $config['approvalPrompt'] . "' was given.");
 		}
 
 		$builder->addDefinition($this->prefix('client'))
@@ -134,7 +138,8 @@ class GoogleExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('apiConfig'))
 			->setClass('Google_Config')
-			->addSetup('setAccessType', array($config['accessType']));
+			->addSetup('setAccessType', array($config['accessType']))
+			->addSetup('setApprovalPrompt', array($config['approvalPrompt']));
 
 		$builder->addDefinition($this->prefix('apiAuth'))
 			->setClass('Google_Auth_OAuth2');
