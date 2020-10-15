@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-namespace Kdyby\Google;
+namespace Lekarna\Google;
 
 use Google_Client;
 use Google_Exception;
 use Google_IO_Abstract;
-use Kdyby\Google\Dialog\AbstractDialog;
+use Lekarna\Google\Dialog\AbstractDialog;
 use Nette\Application;
 use Nette\Application\UI\PresenterComponent;
 use Nette\ComponentModel\IComponent;

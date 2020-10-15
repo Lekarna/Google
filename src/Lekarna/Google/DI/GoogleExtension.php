@@ -8,11 +8,12 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-namespace Kdyby\Google\DI;
+namespace Lekarna\Google\DI;
 
 use Nette\DI\CompilerExtension;
-use Nette\DI\Container;
 use Nette\DI\Statement;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use Nette\Utils\Validators;
 use Nette;
 
@@ -25,27 +26,31 @@ use Nette;
 class GoogleExtension extends CompilerExtension
 {
 
-	/** @var array */
-	public $defaults = array(
-		'appId' => NULL, // kdyby-style naming
-		'appSecret' => NULL,
-		'clientId' => NULL, // google-style naming
-		'clientSecret' => NULL,
-		'apiKey' => NULL,
-		'clearAllWithLogout' => TRUE,
-		'scopes' => array('profile', 'email'),
-		'accessType' => 'online',
-		'approvalPrompt' => 'auto',
-		'returnUri' => NULL,
-		'debugger' => '%debugMode%'
-	);
-
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getConfigSchema(): Schema
+	{
+		return Expect::array([
+			'appId' => NULL, // kdyby-style naming
+			'appSecret' => NULL,
+			'clientId' => NULL, // google-style naming
+			'clientSecret' => NULL,
+			'apiKey' => NULL,
+			'clearAllWithLogout' => TRUE,
+			'scopes' => array('profile', 'email'),
+			'accessType' => 'online',
+			'approvalPrompt' => 'auto',
+			'returnUri' => NULL,
+			'debugger' => '%debugMode%'
+		]);
+	}
 
 
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig();
 
 		$rawConfig = $this->getConfig();
 		if (isset($rawConfig['appId']) || isset($rawConfig['appSecret'])) {
@@ -71,10 +76,10 @@ class GoogleExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('client'))
-			->setClass('Kdyby\Google\Google');
+			->setClass('Lekarna\Google\Google');
 
 		$configuration = $builder->addDefinition($this->prefix('config'))
-			->setClass('Kdyby\Google\Configuration')
+			->setClass('Lekarna\Google\Configuration')
 			->setArguments(array(
 				$config['appId'],
 				$config['appSecret'],
@@ -130,7 +135,7 @@ class GoogleExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('apiClient'))
-			->setClass('Google_Client', array($this->prefix('@apiConfig')))
+			->setFactory('Google_Client', array($this->prefix('@apiConfig')))
 			->addSetup('$this->addService(?, ?)', array($this->prefix('apiClient'), '@self'))
 			->addSetup('?->configureClient(?)', array($this->prefix('@config'), '@self'))
 			->addSetup('setIo', array($this->prefix('@apiIo')))
@@ -145,14 +150,14 @@ class GoogleExtension extends CompilerExtension
 			->setClass('Google_Auth_OAuth2');
 
 		$curl = $builder->addDefinition($this->prefix('apiIo'))
-			->setClass('Kdyby\Google\IO\Curl');
+			->setClass('Lekarna\Google\IO\Curl');
 
 		$builder->addDefinition($this->prefix('session'))
-			->setClass('Kdyby\Google\SessionStorage');
+			->setClass('Lekarna\Google\SessionStorage');
 
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('panel'))
-				->setClass('Kdyby\Google\Diagnostics\Panel');
+				->setClass('Lekarna\Google\Diagnostics\Panel');
 			$curl->addSetup($this->prefix('@panel') . '::register', array('@self'));
 		}
 

@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-namespace Kdyby\Google\Diagnostics;
+namespace Lekarna\Google\Diagnostics;
 
 use Google_Exception;
 use Google_Http_Request;
-use Kdyby\Google\IO\Curl;
+use Lekarna\Google\IO\Curl;
 use Nette\Utils\Html;
 use Nette;
 use Nette\SmartObject;

@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-namespace Kdyby\Google\Dialog;
+namespace Lekarna\Google\Dialog;
 
-use Kdyby\Google\Configuration;
-use Kdyby\Google\Google;
+use Lekarna\Google\Configuration;
+use Lekarna\Google\Google;
 use Nette\Application;
 use Nette\Application\Responses;
 use Nette\Application\UI\PresenterComponent;
@@ -45,7 +45,7 @@ abstract class AbstractDialog extends PresenterComponent
 	protected $config;
 
 	/**
-	 * @var \Kdyby\Google\SessionStorage
+	 * @var \Lekarna\Google\SessionStorage
 	 */
 	protected $session;
 

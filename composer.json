@@ -42,10 +42,10 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Kdyby\\Google\\": "src/"
+			"Lekarna\\Google\\": "src/"
 		},
 		"classmap": [
-			"src/Kdyby/Google/exceptions.php"
+			"src/Lekarna/Google/exceptions.php"
 		]
 	},
 	"extra": {
