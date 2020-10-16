@@ -64,8 +64,6 @@ abstract class AbstractDialog extends PresenterComponent
 		$this->google = $google;
 		$this->config = $google->getConfig();
 		$this->session = $google->getSession();
-
-		parent::__construct();
 	}
 
 
