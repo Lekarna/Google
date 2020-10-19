@@ -12,11 +12,9 @@ namespace Lekarna\Google\Dialog;
 
 use Lekarna\Google\Configuration;
 use Lekarna\Google\Google;
-use Nette\Application;
 use Nette\Application\Responses;
-use Nette\Application\UI\PresenterComponent;
+use Nette\Application\UI\Component;
 use Nette\Http\UrlScript;
-use Nette;
 
 
 
@@ -26,7 +24,7 @@ use Nette;
  *
  * @method onResponse(AbstractDialog $dialog)
  */
-abstract class AbstractDialog extends PresenterComponent
+abstract class AbstractDialog extends Component
 {
 
 	/**
@@ -125,6 +123,7 @@ abstract class AbstractDialog extends PresenterComponent
 	 * It automatically calls the onResponse event.
 	 *
 	 * You don't have to redirect, the request before the auth process will be restored automatically.
+	 * @crossOrigin
 	 */
 	public function handleResponse()
 	{

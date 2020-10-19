@@ -32,7 +32,6 @@ class LoginDialog extends AbstractDialog
 	}
 
 
-
 	/**
 	 * @return UrlScript
 	 */
