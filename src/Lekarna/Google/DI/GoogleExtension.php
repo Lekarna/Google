@@ -39,7 +39,7 @@ class GoogleExtension extends CompilerExtension
 			'apiKey' => NULL,
 			'clearAllWithLogout' => TRUE,
 			'scopes' => array('profile', 'email'),
-			'accessType' => 'online',
+			'accessType' => 'offline',
 			'approvalPrompt' => 'auto',
 			'returnUri' => NULL,
 			'debugger' => '%debugMode%'
@@ -111,14 +111,12 @@ class GoogleExtension extends CompilerExtension
 			if (self::isUrl($config['returnUri'])) {
 				$destination = new Nette\Http\UrlScript($config['returnUri']);
 				if (!$destination->scheme) {
-					$fixed = clone $destination;
-					$fixed->scheme = 'https';
+					$fixed = $destination->withScheme('https');
 					throw new Nette\Utils\AssertionException("Please fix your configuration, scheme for returnUri is missing. Hint: `" . $this->name . ": returnUri: $fixed`");
 				}
 
 				if (!$destination->path) {
-					$fixed = clone $destination;
-					$fixed->path = '/oauth-google';
+					$fixed = $destination->withPath('/oauth-google');
 					throw new Nette\Utils\AssertionException("Are you sure that you wanna redirect from Google auth to '$destination'? Hint: you might wanna add some path `" . $this->name . ": returnUri: $fixed`");
 				}
 
@@ -135,22 +133,11 @@ class GoogleExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('apiClient'))
-			->setFactory('Google_Client', array($this->prefix('@apiConfig')))
+			->setType(\Google_Client::class)
 			->addSetup('$this->addService(?, ?)', array($this->prefix('apiClient'), '@self'))
 			->addSetup('?->configureClient(?)', array($this->prefix('@config'), '@self'))
-			->addSetup('setIo', array($this->prefix('@apiIo')))
-			->addSetup('setAuth', array($this->prefix('@apiAuth')));
-
-		$builder->addDefinition($this->prefix('apiConfig'))
-			->setClass('Google_Config')
 			->addSetup('setAccessType', array($config['accessType']))
 			->addSetup('setApprovalPrompt', array($config['approvalPrompt']));
-
-		$builder->addDefinition($this->prefix('apiAuth'))
-			->setClass('Google_Auth_OAuth2');
-
-		$curl = $builder->addDefinition($this->prefix('apiIo'))
-			->setClass('Lekarna\Google\IO\Curl');
 
 		$builder->addDefinition($this->prefix('session'))
 			->setClass('Lekarna\Google\SessionStorage');
@@ -158,7 +145,6 @@ class GoogleExtension extends CompilerExtension
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('panel'))
 				->setClass('Lekarna\Google\Diagnostics\Panel');
-			$curl->addSetup($this->prefix('@panel') . '::register', array('@self'));
 		}
 
 		if ($config['clearAllWithLogout']) {

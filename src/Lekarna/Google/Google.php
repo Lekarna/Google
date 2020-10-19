@@ -267,7 +267,7 @@ class Google
 	 */
 	protected function getUserAccessToken()
 	{
-		if (($code = $this->getCode()) && $code != $this->session->code) {
+		if ($code = $this->getCode()) {
 			if ($accessToken = $this->getAccessTokenFromCode($code)) {
 				$this->session->code = $code;
 				$this->session->verified_id_token = NULL;
@@ -281,12 +281,9 @@ class Google
 		}
 
 		if (empty($this->session->access_token) && !empty($this->session->refresh_token)) {
-			/** @var \Google_Auth_OAuth2 $auth  */
-			$auth = $this->client->getAuth();
-
 			try {
-				$auth->refreshToken($this->session->refresh_token);
-				$accessToken = Json::decode($auth->getAccessToken(), Json::FORCE_ARRAY);
+				$this->client->refreshToken($this->session->refresh_token);
+				$accessToken = Json::decode($this->client->getAccessToken(), Json::FORCE_ARRAY);
 
 				if (empty($accessToken) || !is_array($accessToken)) {
 					throw new UnexpectedValueException('Access token is expected to be a valid json array.');
@@ -334,7 +331,7 @@ class Google
 
 		try {
 			$this->client->setRedirectUri((string) $this->getCurrentUrl());
-			$response = Json::decode($this->client->authenticate($code), Json::FORCE_ARRAY);
+			$response = $this->client->authenticate($code);
 
 			if (empty($response) || !is_array($response)) {
 				return FALSE;
@@ -387,8 +384,7 @@ class Google
 	 */
 	protected function getCode()
 	{
-		$state = $this->getRequest('state');
-		if (($code = $this->getRequest('code')) && $state && $this->session->state === $state) {
+		if ($code = $this->getRequest('code')) {
 			$this->session->state = NULL; // CSRF state has done its job, so clear it
 			return $code;
 		}
@@ -411,11 +407,11 @@ class Google
 				return $this->getProfile()->getId();
 			}
 
-			if (!array_key_exists(\Google_Auth_LoginTicket::USER_ATTR, $verifiedIdToken)) {
+			if (!array_key_exists('sub', $verifiedIdToken)) {
 				return 0;
 			}
 
-			return $verifiedIdToken[\Google_Auth_LoginTicket::USER_ATTR];
+			return $verifiedIdToken['sub'];
 
 		} catch (\Exception $e) {
 			Debugger::log($e, 'google');
@@ -445,19 +441,11 @@ class Google
 
 		$this->client->setRedirectUri((string) $this->getCurrentUrl());
 
-		/** @var \Google_Auth_OAuth2 $auth */
-		$auth = $this->client->getAuth();
-
 		// ensure the token is set
-		$auth->setAccessToken(json_encode($token));
+		$this->client->setAccessToken(json_encode($token));
 
-		$loginTicket = $auth->verifyIdToken();
-		$this->session->verified_id_token = $loginTicket->getAttributes();
-
-		if (!array_key_exists('payload', $this->session->verified_id_token)) {
-			$this->session->verified_id_token = NULL;
-			return NULL;
-		}
+		$loginTicket = $this->client->verifyIdToken();
+		$this->session->verified_id_token = ['payload' => $loginTicket];
 
 		return $this->session->verified_id_token['payload'];
 	}
